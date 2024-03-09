@@ -1,0 +1,64 @@
+#include <iostream>
+#include <fstream>
+#include <vector>
+#include <unordered_map>
+
+using namespace std;
+
+// Функція для зчитування матриці з файлу
+vector<vector<int>> readMatrixFromFile(const string& filename, int& M, int& N) {
+    ifstream inputFile(filename);
+    if (!inputFile) {
+        cerr << "Unable to open input file " << filename << endl;
+        exit(1);
+    }
+    inputFile >> M >> N;
+    vector<vector<int>> matrix(M, vector<int>(N));
+    for (int i = 0; i < M; ++i) {
+        for (int j = 0; j < N; ++j) {
+            inputFile >> matrix[i][j];
+        }
+    }
+    inputFile.close();
+    return matrix;
+}
+
+// Функція для обробки матриці та знаходження кількості схожих стовпців
+int countSimilarColumns(const vector<vector<int>>& matrix) {
+    int M = matrix.size();
+    int N = matrix[0].size();
+
+    unordered_map<string, int> columnCounts;
+    for (int j = 0; j < N - 1; ++j) {
+        string columnHash;
+        for (int i = 0; i < M; ++i) {
+            columnHash += to_string(matrix[i][j]) + ",";
+        }
+        columnCounts[columnHash]++;
+    }
+    string lastColumnHash;
+    for (int i = 0; i < M; ++i) {
+        lastColumnHash += to_string(matrix[i][N - 1]) + ",";
+    }
+    return columnCounts[lastColumnHash];
+}
+
+int main() {
+    string inputFilename;
+    int M, N;
+    
+    // Зчитуємо ім'я файлу з консолі
+    cout << "Enter the input filename: ";
+    cin >> inputFilename;
+
+    // Зчитуємо матрицю з файлу
+    vector<vector<int>> matrix = readMatrixFromFile(inputFilename, M, N);
+
+    // Оброблюємо матрицю та знаходимо кількість схожих стовпців
+    int similarColumns = countSimilarColumns(matrix);
+
+    // Виводимо результат у консоль
+    cout << "Number of columns similar to the last column: " << similarColumns << endl;
+
+    return 0;
+}
