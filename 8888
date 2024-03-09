@@ -1,0 +1,75 @@
+#include <iostream>
+#include <fstream>
+#include <vector>
+
+using namespace std;
+
+// Функція для зчитування масиву з файлу
+vector<int> readArrayFromFile(const string& filename) {
+    vector<int> arr;
+    ifstream inputFile(filename);
+    if (!inputFile) {
+        cerr << "Unable to open input file " << filename << endl;
+        exit(1);
+    }
+    int num;
+    while (inputFile >> num) {
+        arr.push_back(num);
+    }
+    inputFile.close();
+    return arr;
+}
+
+// Функція для виведення масиву у консоль
+void printArray(const vector<int>& arr) {
+    for (int num : arr) {
+        cout << num << " ";
+    }
+    cout << endl;
+}
+
+// Функція для сортування масиву двійковим вставним методом
+void binaryInsertionSort(vector<int>& arr) {
+    int n = arr.size();
+    for (int i = 1; i < n; ++i) {
+        int key = arr[i];
+        int left = 0, right = i - 1;
+        // Бінарний пошук для знаходження правильної позиції для вставки
+        while (left <= right) {
+            int mid = left + (right - left) / 2;
+            if (arr[mid] < key)
+                left = mid + 1;
+            else
+                right = mid - 1;
+        }
+        // Переміщення елементів для вставки нового елемента
+        for (int j = i - 1; j >= left; --j) {
+            arr[j + 1] = arr[j];
+        }
+        arr[left] = key;
+    }
+}
+
+int main() {
+    string inputFilename;
+
+    // Зчитуємо ім'я файлу з консолі
+    cout << "Enter the input filename: ";
+    cin >> inputFilename;
+
+    // Зчитуємо масив з файлу
+    vector<int> arr = readArrayFromFile(inputFilename);
+
+    // Виводимо початковий масив
+    cout << "Original array: ";
+    printArray(arr);
+
+    // Сортуємо масив за допомогою двійкового вставного сортування
+    binaryInsertionSort(arr);
+
+    // Виводимо відсортований масив
+    cout << "Sorted array: ";
+    printArray(arr);
+
+    return 0;
+}
