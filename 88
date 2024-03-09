@@ -1,0 +1,83 @@
+#include <iostream>
+#include <fstream>
+#include <vector>
+#include <unordered_map>
+
+using namespace std;
+
+// Функція для зчитування масиву з файлу
+vector<int> readArrayFromFile(const string& filename) {
+    vector<int> arr;
+    ifstream inputFile(filename);
+    if (!inputFile) {
+        cerr << "Unable to open input file " << filename << endl;
+        exit(1);
+    }
+    int num;
+    while (inputFile >> num) {
+        arr.push_back(num);
+    }
+    inputFile.close();
+    return arr;
+}
+
+// Функція для виведення масиву у файл
+void writeArrayToFile(const string& filename, const vector<int>& arr) {
+    ofstream outputFile(filename);
+    if (!outputFile) {
+        cerr << "Unable to open output file " << filename << endl;
+        exit(1);
+    }
+    for (int num : arr) {
+        outputFile << num << " ";
+    }
+    outputFile.close();
+}
+
+// Функція для видалення елементів, що зустрічаються менше трьох разів
+vector<int> removeInfrequentElements(const vector<int>& arr) {
+    unordered_map<int, int> frequency;
+    for (int num : arr) {
+        frequency[num]++;
+    }
+    vector<int> result;
+    for (int num : arr) {
+        if (frequency[num] >= 3) {
+            result.push_back(num);
+        }
+    }
+    return result;
+}
+
+int main() {
+    string inputFilename, outputFilename;
+    
+    // Зчитуємо ім'я файлу з консолі
+    cout << "Enter the input filename: ";
+    cin >> inputFilename;
+
+    // Зчитуємо масив з файлу
+    vector<int> arr = readArrayFromFile(inputFilename);
+
+    // Видаляємо елементи, які зустрічаються менше трьох разів
+    vector<int> result = removeInfrequentElements(arr);
+
+    // Виводимо розмір отриманого масиву і його вміст
+    cout << "Size of the resulting array: " << result.size() << endl;
+    cout << "Content of the resulting array: ";
+    for (int num : result) {
+        cout << num << " ";
+    }
+    cout << endl;
+
+    // Зчитуємо ім'я вихідного файлу з консолі
+    cout << "Enter the output filename: ";
+    cin >> outputFilename;
+
+    // Записуємо результат у файл "array_out_n.txt"
+    writeArrayToFile(outputFilename, result);
+
+    cout << "Results written to " << outputFilename << endl;
+
+    return 0;
+}
